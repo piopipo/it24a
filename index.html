@@ -6,25 +6,37 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Todo List</h1>
-    <input type="Test"
-        id="TaskInput"
-        placeholder="Add a Task"
 
-    />
+    <h1>Todo List</h1>
+    <input
+        type="text"
+        id="taskInput"
+        placeholder="Add a Task"
+/>
     <button onclick="addTask()">Add Task</button>
-    <ul id="tasklist">Your tasks go here...</ul>
+    <ul id="taskList"></ul>
 
 <script>
-function getTaskTest(){
-    const input = document.getElementById("TaskInput");
+function getTaskTest() {
+    const input = document.getElementById("taskInput");
     const text = input.value.trim();
 
-    console.log("The input value is: " + Input.value);
+    console.log("The input value is: " + input.value);
     return text;
 }
-function addTask(){
-    getTaskText();
+
+function addTask() {
+    const taskTest = getTaskTest();
+    addTaskItem(taskTest);
+}
+
+function addTaskItem(taskText){
+    const li = document.createElement('li');
+    const taskSpan = document.createElement('span');
+    taskSpan.textContent = taskText;
+    li.appendChild(taskSpan);
+
+    document.getElementById('taskList').appendChild(li);
 }
 </script>
 
