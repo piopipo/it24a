@@ -33,11 +33,21 @@
 
     function initMap(mapDataUrl) {
         const map = L.map('map').setView([8.360,124.868], 17);
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        
+        const openstreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             maxZoom:19,
             attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-        
+        });
+
+        const satellite = L.tileLayer(
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+            {attribution: 'Tiles (c) Esri -, Maxar, Earthstar, Geogrphics, & GIS User Community'}
+
+    );
+    
+    satellite.addTo(map);
+
+
         //render pins
         fetch(mapDataUrl)
         .then(response=>response.json())
@@ -54,6 +64,14 @@
                     ${image}
                 `);
             });
+
+            const baseMaps = {
+                "OpenStreetMap" : openstreetMap,
+                "Satellite" : satellite
+            };
+
+            L.control.layers(baseMaps).addTo(map);
+
         });
 }
 
