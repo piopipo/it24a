@@ -65,33 +65,37 @@
         }
 
 
-        // GPS LOCATION
-        function getGPSLocation() {
+       function getGPSLocation() {
 
-            if (!navigator.geolocation) {
-                alert("Geolocation is not supported by your browser.");
-                return;
-            }
+    if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your browser.");
+        return;
+    }
 
-            navigator.geolocation.getCurrentPosition(
+    document.getElementById("locationResult").innerHTML =
+        "Getting your location...";
 
-                function(position) {
+    navigator.geolocation.getCurrentPosition(
 
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
+        function(position) {
 
-                    getWeatherByCoordinates(latitude, longitude);
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
 
-                },
+            getWeatherByCoordinates(latitude, longitude);
 
-                function(error) {
+        },
 
-                    alert("Unable to get your location: " + error.message);
+        function(error) {
 
-                }
+            document.getElementById("locationResult").innerHTML = "";
 
-            );
+            alert("GPS Error: " + error.message);
+
         }
+
+    );
+}
 
 
         // GET WEATHER USING COORDINATES
