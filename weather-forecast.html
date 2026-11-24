@@ -26,7 +26,7 @@
 
     <script>
 
-        const apiKey = "YOUR_OPENWEATHER_API_KEY";
+        const apiKey = "5ac059784f213c7996973cb7dd002bb4";
 
 
         // MANUAL LOCATION
@@ -41,6 +41,7 @@
 
             const url =
                 `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+
 
             try {
 
@@ -65,173 +66,127 @@
         }
 
 
-       function getGPSLocation() {
+        // GPS LOCATION
+        function getGPSLocation() {
 
-    if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your browser.");
-        return;
-    }
+            if (!navigator.geolocation) {
+                alert("Geolocation is not supported by your browser.");
+                return;
+            }
 
-    document.getElementById("locationResult").innerHTML =
-        "Getting your location...";
+            document.getElementById("locationResult").innerHTML =
+                "Getting your location...";
 
-    navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.getCurrentPosition(
 
-        function(position) {
+                function(position) {
 
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
 
-            getWeatherByCoordinates(latitude, longitude);
+                    getWeatherByCoordinates(latitude, longitude);
 
-        },
+                },
 
-        function(error) {
+                function(error) {
 
-            document.getElementById("locationResult").innerHTML = "";
+                    document.getElementById("locationResult").innerHTML = "";
 
-            alert("GPS Error: " + error.message);
+                    alert("GPS Error: " + error.message);
 
+                }
+
+            );
         }
 
-    );
-}
-async function getWeatherByCoordinates(latitude, longitude) {
 
-    const weatherUrl =
-        `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
-
-
-    const forecastUrl =
-        `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
-
-
-    try {
-
-        // Current Weather
-
-        const weatherResponse = await fetch(weatherUrl);
-
-        if (!weatherResponse.ok) {
-            throw new Error("Unable to retrieve weather");
-        }
-
-        const data = await weatherResponse.json();
-
-        document.getElementById("locationResult").innerHTML =
-            `Location: ${data.name}, ${data.sys.country}`;
-
-        document.getElementById("weatherResult").innerHTML = `
-
-            <h2>Current Weather</h2>
-
-            <h3>${data.name}, ${data.sys.country}</h3>
-
-            <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">
-
-            <p>Temperature: ${data.main.temp} °C</p>
-
-            <p>Weather: ${data.weather[0].description}</p>
-
-            <p>Humidity: ${data.main.humidity}%</p>
-
-            <p>Wind Speed: ${data.wind.speed} m/s</p>
-
-        `;
-
+        // CURRENT WEATHER AND FIVE-DAY FORECAST
         async function getWeatherByCoordinates(latitude, longitude) {
 
-    // Your weatherUrl and forecastUrl
-
-    try {
-
-        // Current Weather
-        // Your current weather code goes here
+            const weatherUrl =
+                `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
 
 
-        // 5-Day Forecast
+            const forecastUrl =
+                `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&appid=${apiKey}&units=metric`;
 
-        const forecastResponse = await fetch(forecastUrl);
 
-        if (!forecastResponse.ok) {
-            throw new Error("Unable to retrieve forecast");
-        }
+            try {
 
-        const forecastData = await forecastResponse.json();
+                // Current Weather
 
-        const forecastResult =
-            document.getElementById("forecastResult");
+                const weatherResponse = await fetch(weatherUrl);
 
-        forecastResult.innerHTML = `
-            <h2>5-Day Weather Forecast</h2>
-        `;
+                if (!weatherResponse.ok) {
+                    throw new Error("Unable to retrieve weather");
+                }
 
-        // Display forecast every 24 hours
+                const data = await weatherResponse.json();
 
-        forecastData.list
-            .filter(item => item.dt_txt.includes("12:00:00"))
-            .forEach(item => {
+                document.getElementById("locationResult").innerHTML =
+                    `Location: ${data.name}, ${data.sys.country}`;
 
-                forecastResult.innerHTML += `
+                document.getElementById("weatherResult").innerHTML = `
 
-                    <hr>
+                    <h2>Current Weather</h2>
 
-                    <h3>${item.dt_txt}</h3>
+                    <h3>${data.name}, ${data.sys.country}</h3>
 
-                    <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png">
+                    <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png">
 
-                    <p>Temperature: ${item.main.temp} °C</p>
+                    <p>Temperature: ${data.main.temp} °C</p>
 
-                    <p>Weather: ${item.weather[0].description}</p>
+                    <p>Weather: ${data.weather[0].description}</p>
 
-                    <p>Humidity: ${item.main.humidity}%</p>
+                    <p>Humidity: ${data.main.humidity}%</p>
 
-                    <p>Wind Speed: ${item.wind.speed} m/s</p>
+                    <p>Wind Speed: ${data.wind.speed} m/s</p>
 
                 `;
 
-            });
 
-    } catch (error) {
+                // 5-Day Forecast
 
-        alert("Error: " + error.message);
+                const forecastResponse = await fetch(forecastUrl);
 
-    }
+                if (!forecastResponse.ok) {
+                    throw new Error("Unable to retrieve forecast");
+                }
 
-}
+                const forecastData = await forecastResponse.json();
 
+                const forecastResult =
+                    document.getElementById("forecastResult");
 
-                // DISPLAY FORECAST
-                document.getElementById("forecastResult").innerHTML =
-                    "<h2>5-Day Weather Forecast</h2>";
+                forecastResult.innerHTML = `
+                    <h2>5-Day Weather Forecast</h2>
+                `;
 
-                forecastData.list.forEach((forecast, index) => {
+                // Display forecast every 24 hours
 
-                    // Display every 8th entry (approximately every 24 hours)
-                    if (index % 8 === 0) {
+                forecastData.list
+                    .filter(item => item.dt_txt.includes("12:00:00"))
+                    .forEach(item => {
 
-                        document.getElementById("forecastResult").innerHTML += `
-
-                            <div>
-
-                                <h3>${forecast.dt_txt}</h3>
-
-                                <p>Temperature: ${forecast.main.temp} °C</p>
-
-                                <p>Weather: ${forecast.weather[0].description}</p>
-
-                                <p>Humidity: ${forecast.main.humidity}%</p>
-
-                            </div>
+                        forecastResult.innerHTML += `
 
                             <hr>
 
+                            <h3>${item.dt_txt}</h3>
+
+                            <img src="https://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png">
+
+                            <p>Temperature: ${item.main.temp} °C</p>
+
+                            <p>Weather: ${item.weather[0].description}</p>
+
+                            <p>Humidity: ${item.main.humidity}%</p>
+
+                            <p>Wind Speed: ${item.wind.speed} m/s</p>
+
                         `;
 
-                    }
-
-                });
-
+                    });
 
             } catch (error) {
 
